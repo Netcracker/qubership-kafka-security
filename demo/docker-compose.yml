@@ -1,0 +1,53 @@
+version: '2'
+services:
+  zookeeper:
+    image: zookeeper:3.9.2
+    ports:
+    - 2181:2181
+  identity-provider:
+    image: security_identity-management:master_latest
+    ports:
+    - 8080:8080
+    environment:
+    - MODE=rest
+    - PROFILE=dev
+    - DEFAULT_KEY=JmvBH9q+8suRWJXV8B/DjsFLYsg+MJZC3B5U13+VSdE=
+    - SYM_KEY=e4T+sdoxVBPminwcwccsPw==
+    - HAZELCAST_CLOUD_ENABLED=false
+    - USER_PASSWORD_POLICY_ENABLE=false
+    - DEFAULT_TENANT=default
+    - IDP_PUBLIC_URL=http://identity-provider:8080/
+  keycloak:
+    image: quay.io/keycloak/keycloak:10.0.2
+    ports:
+      - 8090:8080
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+  kafka:
+    image: kafka:3.8.0
+    ports:
+    - 9092:9092
+    - 9094:9094
+    volumes:
+#      - ../kafka-security-oauth-server/target/kafka-security-oauth-server-0.10.0_3.8.0-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-server-[version from kafka docker image].jar
+#      - ../kafka-security-oauth-client/target/kafka-security-oauth-client-0.10.0_3.8.0-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-client-[version from kafka docker image].jar
+      - ./public-certs:/opt/kafka/public-certs
+      - ./trusted-certs:/opt/kafka/trustcerts
+    links:
+    - zookeeper
+    - identity-provider
+    environment:
+    - ZOOKEEPER_CONNECT=zookeeper:2181
+    - CLIENT_HOST_NAME=localhost
+    - DISABLE_SECURITY=false
+    - ADMIN_USERNAME=admin
+    - ADMIN_PASSWORD=admin
+    - CLIENT_USERNAME=client
+    - CLIENT_PASSWORD=client
+    - "IDP_WHITELIST=[{'external': 'http://localhost:8090/auth/realms/master','internal':'http://keycloak:8080/auth/realms/master'},{'external': 'http://identity-provider:8080/'},{'internal': 'http://host.docker.internal:8200/v1/identity/oidc','external':'http://vault-service.vault-service:8200/v1/identity/oidc'}]"
+    - ENABLE_AUTHORIZATION=true
+    - ENABLE_AUDIT_LOGS=true
+    - TOKEN_ROLES_PATH=scope
+    - JWK_SOURCE_TYPE=jwks
+    - REPLACE_INTERNAL_HOST_ENABLED=true

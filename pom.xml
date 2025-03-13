@@ -227,12 +227,8 @@
 
   <distributionManagement>
     <repository>
-      <id>nexus-staging</id>
-      <url>${repo.prefix}/pd.dtrust.mvn.staging/</url>
+      <id>central</id>
+      <name>Central Maven Repository</name>
     </repository>
-    <snapshotRepository>
-      <id>nexus-snapshots</id>
-      <url>${repo.prefix}/pd.dtrust.mvn.snapshots/</url>
-    </snapshotRepository>
   </distributionManagement>
 </project>

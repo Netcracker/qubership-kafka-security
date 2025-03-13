@@ -15,6 +15,7 @@ on:
   workflow_dispatch:
 permissions:
   packages: write
+  contents: read
 
 env:
   GITHUB_GROUP: ${{ github.repository_owner }}

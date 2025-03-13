@@ -20,8 +20,14 @@ jobs:
   mvn-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout code"
-        uses: actions/checkout@v4
+#      - name: "Checkout code"
+#        uses: actions/checkout@v4
+      - name: "Manual Git Checkout"
+        run: |
+          git init
+          git remote add origin https://github.com/Netcracker/qubership-kafka-security.git
+          git fetch --prune --no-tags --depth=1 origin test/branch_for_mvn_deploy
+          git checkout -b test/branch_for_mvn_deploy origin/test/branch_for_mvn_deploy
       - name: "Setup xmlstarlet"
         run: |
           sudo apt install -y xmlstarlet

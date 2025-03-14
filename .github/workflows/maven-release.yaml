@@ -29,7 +29,7 @@ on:
       java-version:
         required: false
         type: string
-        default: "21"
+        default: "8"
         description: 'Java version (e.g., 21)'
       dry-run:
         required: false

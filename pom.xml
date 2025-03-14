@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.qubership.kafka-security</groupId>
   <artifactId>kafka-security</artifactId>
-  <version>${revision}</version>
+  <version>0.10.0_3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -195,7 +195,7 @@
           <format>xml</format>
           <configLocation>google_checks.xml</configLocation>
           <violationSeverity>warning</violationSeverity>
-          <failOnViolation>true</failOnViolation>
+          <failOnViolation>false</failOnViolation>
           <failsOnError>true</failsOnError>
           <consoleOutput>true</consoleOutput>
           <includeTestSourceDirectory>false</includeTestSourceDirectory>

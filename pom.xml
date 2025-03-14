@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.qubership.kafka-security</groupId>
   <artifactId>kafka-security</artifactId>
-  <version>0.10.0_3.8.0-SNAPSHOT</version>
+  <version>0.10.0_3.8.0</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -36,7 +36,7 @@
     <reload4j.version>1.2.19</reload4j.version>
     <jackson.databind.version>2.16.0</jackson.databind.version>
     <log4j.version>2.17.2</log4j.version>
-    <revision>0.10.0_3.8.0-SNAPSHOT</revision>
+    <revision>0.10.0_3.8.0</revision>
   </properties>
 
   <dependencyManagement>

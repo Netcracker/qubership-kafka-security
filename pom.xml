@@ -229,8 +229,8 @@
 
   <distributionManagement>
     <repository>
-      <id>central</id>
-      <name>Central Maven Repository</name>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/Netcracker/qubership-kafka-security</url>
     </repository>
   </distributionManagement>
 </project>

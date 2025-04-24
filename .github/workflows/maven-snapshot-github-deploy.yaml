@@ -41,13 +41,9 @@ jobs:
           server-password: GITHUB_TOKEN
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
-
-      - name: Display settings.xml
-        run: cat ~/.m2/settings.xml
       - name: "Disable Maven Central Deploy"
         run: |
           xmlstarlet ed -L -d "/_:project/_:build/_:plugins/_:plugin[./_:artifactId='central-publishing-maven-plugin']" ./pom.xml
-
       - name: "Maven deploy"
         run: |
           mvn --batch-mode deploy -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }} \

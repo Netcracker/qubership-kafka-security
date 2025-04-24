@@ -18,12 +18,11 @@ package org.qubership.kafka.security.audit.history;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class performs logging of messages in CEF (Common Event Format) that is used for integration

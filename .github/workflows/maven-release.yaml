@@ -25,11 +25,11 @@ on:
         required: true
         default: '1.0.0'
         type: string
-        description: 'Release version (e.g., 1.0.0)'
+        description: 'Release version (e.g., 0.10.0_3.8.0)'
       java-version:
         required: false
         type: string
-        default: "21"
+        default: "8"
         description: 'Java version (e.g., 21)'
       dry-run:
         required: false

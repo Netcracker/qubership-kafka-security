@@ -16,10 +16,10 @@
 
 package org.qubership.kafka.security.audit;
 
+import javax.annotation.Nonnull;
+import java.util.Map;
 import org.qubership.kafka.security.audit.history.CEFHistoryRecord;
 import org.qubership.kafka.security.audit.history.CEFLog4jHistoryWriter;
-import java.util.Map;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

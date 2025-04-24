@@ -34,7 +34,7 @@
     <reload4j.version>1.2.19</reload4j.version>
     <jackson.databind.version>2.16.0</jackson.databind.version>
     <log4j.version>2.17.2</log4j.version>
-    <revision>0.10.0_3.8.0</revision>
+    <revision>1.0.0</revision>
   </properties>
 
   <dependencyManagement>
@@ -219,4 +219,11 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/Netcracker/qubership-kafka-security</url>
+    </repository>
+  </distributionManagement>
 </project>

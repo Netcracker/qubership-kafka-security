@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.qubership.kafka-security</groupId>
   <artifactId>kafka-security</artifactId>
@@ -36,7 +34,7 @@
     <reload4j.version>1.2.19</reload4j.version>
     <jackson.databind.version>2.16.0</jackson.databind.version>
     <log4j.version>2.17.2</log4j.version>
-    <revision>0.10.0_3.8.0</revision>
+    <revision>1.0.0</revision>
   </properties>
 
   <dependencyManagement>

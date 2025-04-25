@@ -16,8 +16,8 @@
 
 package org.qubership.kafka.security.oauthbearer;
 
-import static org.qubership.kafka.security.oauthbearer.OAuthLoginUtils.createClient;
 import static java.util.Objects.requireNonNull;
+import static org.qubership.kafka.security.oauthbearer.OAuthLoginUtils.createClient;
 
 import java.io.IOException;
 import java.nio.file.Files;

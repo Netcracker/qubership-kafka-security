@@ -25,11 +25,11 @@ on:
         required: true
         default: '1.0.0'
         type: string
-        description: 'Release version (e.g., 1.0.0)'
+        description: 'Release version (e.g., 0.10.0-3.8.0)'
       java-version:
         required: false
         type: string
-        default: "21"
+        default: "8"
         description: 'Java version (e.g., 21)'
       dry-run:
         required: false
@@ -95,6 +95,7 @@ jobs:
     needs: [update-pom-version]
     uses: netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
     with:
+      ref: ${{ github.ref_name }}
       maven-command: "--batch-mode package"
       java-version: ${{ github.event.inputs.java-version }}
       upload-artifact: true
@@ -125,6 +126,7 @@ jobs:
     needs: [update-pom-version, tag]
     uses: netcracker/qubership-workflow-hub/.github/workflows/maven-publish.yml@main
     with:
+      ref: ${{ github.ref_name }}
       maven-command: ${{ (github.event.inputs.dry-run == 'true' && '--batch-mode package') || '--batch-mode deploy' }}
       java-version: ${{ github.event.inputs.java-version }}
       upload-artifact: false
@@ -140,5 +142,6 @@ jobs:
     needs: [tag]
     uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
     with:
+      ref: ${{ github.ref_name }}
       version: ${{ github.event.inputs.version }}
       publish: false

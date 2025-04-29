@@ -28,20 +28,16 @@ When Identity Provider is ready to work, navigate to `http://localhost:8080/swag
 To register new OAuth2 client, go to `Identity Provider - OAuth2` -> `POST /register` and specify the
 following parameters:
 
-* `Authorization` is an initial access token. It should be filled with `Bearer default_client_registration_secret` value.
-* `data` is data for new OAuth2 client in JSON format. For example,
-    ```json
-    {
-      "client_name": "Kafka",
-      "redirect_uris": [
-        "string"
-      ],
-      "grant_types": [
-        "client_credentials"
-      ],
-      "scope": "Administrator Kafka Client"
-    }
-    ```
+- `Authorization` is an initial access token. It should be filled with `Bearer default_client_registration_secret` value.
+- `data` is data for new OAuth2 client in JSON format. For example,
+  ```json
+  {
+    "client_name": "Kafka",
+    "redirect_uris": ["string"],
+    "grant_types": ["client_credentials"],
+    "scope": "Administrator Kafka Client"
+  }
+  ```
 
 Then press the `Try it out!` button.
 
@@ -109,42 +105,43 @@ sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule require
 
 Now you can create all manner of ACLs you need. Here are some variants as an example:
 
-* Create allowing ACLs for `Role:User` principal as producer and consumer. In this scenario `OAUTHBEARER`
+- Create allowing ACLs for `Role:User` principal as producer and consumer. In this scenario `OAUTHBEARER`
   tests fail because the created OAuth2 client (`040e5206-670b-4021-bc16-5b4431b47733`) does not have
   `User` role.
 
-    ```
-    $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:User --producer --topic kafka-oauth-example-topic
-    $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:User --consumer --topic kafka-oauth-example-topic --group kafka-oauth-example-group
-    ```
+  ```
+  $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:User --producer --topic kafka-oauth-example-topic
+  $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:User --consumer --topic kafka-oauth-example-topic --group kafka-oauth-example-group
+  ```
 
-* Create allowing ACLs for `Role:Administrator` principal as producer and consumer. In this scenario `OAUTHBEARER`
+- Create allowing ACLs for `Role:Administrator` principal as producer and consumer. In this scenario `OAUTHBEARER`
   tests succeed because the created OAuth2 client (`040e5206-670b-4021-bc16-5b4431b47733`) has `Administrator` role.
 
-    ```
-    $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:Administrator --producer --topic kafka-oauth-example-topic
-    $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:Administrator --consumer --topic kafka-oauth-example-topic --group kafka-oauth-example-group
-    ```
+  ```
+  $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:Administrator --producer --topic kafka-oauth-example-topic
+  $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --allow-principal Role:Administrator --consumer --topic kafka-oauth-example-topic --group kafka-oauth-example-group
+  ```
 
-* Create denying ACL for `Role:Client` principal coming from `10.0.2.2` IP. In this scenario `OAUTHBEARER`
+- Create denying ACL for `Role:Client` principal coming from `10.0.2.2` IP. In this scenario `OAUTHBEARER`
   tests fail because the created OAuth2 client (`040e5206-670b-4021-bc16-5b4431b47733`) has `Client`
   role and comes from `10.0.2.2` IP.
 
-    ```
-    $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --deny-principal Role:Client --deny-host 10.0.2.2 --operation Write --topic kafka-oauth-example-topic
-    ```
+  ```
+  $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --add --deny-principal Role:Client --deny-host 10.0.2.2 --operation Write --topic kafka-oauth-example-topic
+  ```
 
-* Delete denying ACL for `Role:Client` principal coming from `10.0.2.2` IP. In this scenario `OAUTHBEARER`
+- Delete denying ACL for `Role:Client` principal coming from `10.0.2.2` IP. In this scenario `OAUTHBEARER`
   tests succeed because the created OAuth2 client (`040e5206-670b-4021-bc16-5b4431b47733`) has only allowing
   ACLs.
 
-    ```
-    $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --remove --deny-principal Role:Client --deny-host 10.0.2.2 --operation Write --topic kafka-oauth-example-topic
-    ```
-  
+  ```
+  $ bin/kafka-acls.sh --bootstrap-server localhost:9092 --command-config ./config/adminclient.properties --remove --deny-principal Role:Client --deny-host 10.0.2.2 --operation Write --topic kafka-oauth-example-topic
+  ```
+
 ## Run Authentication Tests With Vault as IdP
 
 ### Configure Vault as IdP
+
 Vault supposed to be installed in some Kubernetes environment and has `Kubernetes Authentication method` to login in the Vault.
 To use the Vault as IdP, it should have `/identity/oidc/{key}` and `/identity/oidc/{role}` Vault secret paths mounted, and
 client application which is installed to the Kubernetes environment must be able to read the `/identity/oidc/{role}`
@@ -190,18 +187,19 @@ spec:
 
 Where,
 
-* `<cr_name>` is unique name of VaultConfig within application namespace.
-* `<policy_name>` is name of Vault policy.
-* `<auth_role>` is name of Vault Kubernetes Authentication role.
-* `<application_service_account_name>` is name of application service account.
-* `<application_namespace>` is name of application Kubernetes namespace.
-* `<application_oidc_name>` is name of Vault OpenId Connect key.
-* `<application_oidc_role>` is name of Vault OpenId Connect role.
+- `<cr_name>` is unique name of VaultConfig within application namespace.
+- `<policy_name>` is name of Vault policy.
+- `<auth_role>` is name of Vault Kubernetes Authentication role.
+- `<application_service_account_name>` is name of application service account.
+- `<application_namespace>` is name of application Kubernetes namespace.
+- `<application_oidc_name>` is name of Vault OpenId Connect key.
+- `<application_oidc_role>` is name of Vault OpenId Connect role.
 
-To perform tests, follow the steps below. 
-1) Choose any service account which has already existed in the same Kubernetes environment as Vault Service. 
-2) Get the service account Kubernetes token and remember it.
-3) Create the `VaultConfig` CR as cr.yaml file. For instance,
+To perform tests, follow the steps below.
+
+1. Choose any service account which has already existed in the same Kubernetes environment as Vault Service.
+2. Get the service account Kubernetes token and remember it.
+3. Create the `VaultConfig` CR as cr.yaml file. For instance,
 
 ```
 apiVersion: qubership.org/v1
@@ -238,28 +236,31 @@ spec:
             key: kafka-client-oidc-key
             ttl: 12h
 ```
+
 and apply it in the application namespace via
+
 ```
 kubectl apply -f cr.yaml -n <namespace>
 ```
-4) Remember the following specified variables:
-   * `VAULT_ROLE_PATH` = `<namespace>-<name>-secret.roles[0].name` (`opendistro-kafka-client-config-kafka-client-role-oidc` in the example).
-   * `VAULT_AUTH_ROLE` = `<namespace>-<name>-auth.kuberetes.roles[0].name` (`opendistro-kafka-client-config-kafka-client-role` in the example).
+
+4. Remember the following specified variables:
+   - `VAULT_ROLE_PATH` = `<namespace>-<name>-secret.roles[0].name` (`opendistro-kafka-client-config-kafka-client-role-oidc` in the example).
+   - `VAULT_AUTH_ROLE` = `<namespace>-<name>-auth.kuberetes.roles[0].name` (`opendistro-kafka-client-config-kafka-client-role` in the example).
 
 ### Run Authentication Tests
 
-* Restart docker-compose with `ENABLE_AUTHORIZATION=false` Kafka environment variable and be sure that `IDP_WHITELIST` Kafka
-environment variable contains correct internal and external path to the Vault Kubernetes service (by default, we have
-`{'internal': 'http://host.docker.internal:8200/v1/identity/oidc','external':'http://vault-service.vault-service:8200/v1/identity/oidc'}`) 
-* Navigate to the `kafka-security-oauth-client/src/test/java/org/qubership/kafka/security/oauthbearer/OAuthExample.java`
-file in IntelliJ IDEA, specify correct values for `VAULT_ROLE_PATH`, `VAULT_AUTH_ROLE` parameters from
-[Configure Vault as IdP](#configure-vault-as-idp) section (st. 4).
-* Specify `KUBERNETES_SERVICE_ACCOUNT_TOKEN` environment variable for OAuthExample.java and set value from
+- Restart docker-compose with `ENABLE_AUTHORIZATION=false` Kafka environment variable and be sure that `IDP_WHITELIST` Kafka
+  environment variable contains correct internal and external path to the Vault Kubernetes service (by default, we have
+  `{'internal': 'http://host.docker.internal:8200/v1/identity/oidc','external':'http://vault-service.vault-service:8200/v1/identity/oidc'}`)
+- Navigate to the `kafka-security-oauth-client/src/test/java/org/qubership/kafka/security/oauthbearer/OAuthExample.java`
+  file in IntelliJ IDEA, specify correct values for `VAULT_ROLE_PATH`, `VAULT_AUTH_ROLE` parameters from
+  [Configure Vault as IdP](#configure-vault-as-idp) section (st. 4).
+- Specify `KUBERNETES_SERVICE_ACCOUNT_TOKEN` environment variable for OAuthExample.java and set value from
   [Configure Vault as IdP](#configure-vault-as-idp) section (st. 2).
-* Organize port forwarding between Kubernetes Vault and localhost machine via the following command:
+- Organize port forwarding between Kubernetes Vault and localhost machine via the following command:
   ```
   kubectl port-forward service/vault-service 8200:8200 -n <vault_namespace>
   ```
   If you specify another port, please, change `VAULT_URL` variable value in the OAuthExample.java class.
-* Run `main` method of the class.
-`SCRAM` and `VAULTOAUTHBEARER` tests should be executed successfully.
+- Run `main` method of the class.
+  `SCRAM` and `VAULTOAUTHBEARER` tests should be executed successfully.

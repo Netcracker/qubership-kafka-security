@@ -184,13 +184,6 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <distributionManagement>
-    <repository>
-      <id>central</id>
-      <name>Central Maven Repository</name>
-    </repository>
-  </distributionManagement>
-
   <profiles>
     <!-- Maven Central -->
     <!-- mvn deploy -P central -->

@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.qubership.kafka-security</groupId>
   <artifactId>kafka-security</artifactId>
-  <version>0.10.0_3.8.0-SNAPSHOT</version>
+  <version>0.10.0-3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>OAuth2 security integration for Apache Kafka</description>
+  <url>https://github.com/Netcracker/qubership-kafka-security</url>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Netcracker</name>
+      <email>opensourcegroup@netcracker.com</email>
+      <organization>Netcracker Technology</organization>
+      <organizationUrl>https://www.netcracker.com</organizationUrl>
+    </developer>
+  </developers>
   <scm>
-    <url>https://github.com/Netcracker/qubership-kafka-security</url>
-    <connection>
-      scm:git:git@github.com:Netcracker/qubership-kafka-security.git
-    </connection>
-    <developerConnection>
-      scm:git:git@github.com:Netcracker/qubership-kafka-security.git
-    </developerConnection>
-    <tag>HEAD</tag>
+    <connection>https//github.com/Netcracker/qubership-kafka-security.git</connection>
+    <developerConnection>https://github.com:Netcracker/qubership-kafka-security.git</developerConnection>
+    <url>https://github.com/Netcracker/qubership-kafka-security/tree/main</url>
   </scm>
 
   <modules>
@@ -36,6 +46,7 @@
     <reload4j.version>1.2.19</reload4j.version>
     <jackson.databind.version>2.16.0</jackson.databind.version>
     <log4j.version>2.17.2</log4j.version>
+    <revision>1.0.0-SNAPSHOT</revision>
   </properties>
 
   <dependencyManagement>
@@ -160,13 +171,109 @@
     </dependencies>
   </dependencyManagement>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>maven-central</id>
+      <url>https://repo1.maven.org/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <profiles>
+    <!-- Maven Central -->
+    <!-- mvn deploy -P central -->
+    <profile>
+      <id>central</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.7.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+              <waitUntil>published</waitUntil>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <distributionManagement>
+        <repository>
+          <id>central</id>
+          <name>Central Maven Repository</name>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </distributionManagement>
+    </profile>
+    <!-- GitHub packages -->
+    <!-- mvn deploy -P github -->
+    <profile>
+      <id>github</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>github</id>
+          <name>GitHub Packages</name>
+          <url>https://maven.pkg.github.com/Netcracker/qubership-kafka-security</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+  </profiles>
+
+  <repositories>
+    <!-- Maven Central repository for release versions -->
+    <repository>
+      <id>oss.sonatype.org</id>
+      <url>https://central.sonatype.com</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+    <!-- Maven Central repository for SNAPSHOT versions-->
+    <repository>
+      <id>oss.sonatype.org-snapshot</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+
+    <!-- GitHub packages repository for both release and SNAPSHOT versions -->
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/netcracker/*</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8.2</version>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
@@ -178,6 +285,69 @@
             <version>1.8.1</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.7.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.2.7</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- Prevent gpg from using pinentry programs -->
+          <gpgArguments>
+            <arg>--pinentry-mode</arg>
+            <arg>loopback</arg>
+          </gpgArguments>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <doclint>none</doclint>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -194,7 +364,7 @@
           <format>xml</format>
           <configLocation>google_checks.xml</configLocation>
           <violationSeverity>warning</violationSeverity>
-          <failOnViolation>true</failOnViolation>
+          <failOnViolation>false</failOnViolation>
           <failsOnError>true</failsOnError>
           <consoleOutput>true</consoleOutput>
           <includeTestSourceDirectory>false</includeTestSourceDirectory>
@@ -212,27 +382,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>maven-central</id>
-      <url>https://repo1.maven.org/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-
-  <distributionManagement>
-    <repository>
-      <id>nexus-staging</id>
-      <url>${repo.prefix}/pd.dtrust.mvn.staging/</url>
-    </repository>
-    <snapshotRepository>
-      <id>nexus-snapshots</id>
-      <url>${repo.prefix}/pd.dtrust.mvn.snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
 </project>

@@ -25,13 +25,13 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
   kafka:
-    image: kafka:3.8.0
+    image: kafka:3.9.1
     ports:
     - 9092:9092
     - 9094:9094
     volumes:
-#      - ../kafka-security-oauth-server/target/kafka-security-oauth-server-0.10.0-3.8.0-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-server-[version from kafka docker image].jar
-#      - ../kafka-security-oauth-client/target/kafka-security-oauth-client-0.10.0-3.8.0-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-client-[version from kafka docker image].jar
+#      - ../kafka-security-oauth-server/target/kafka-security-oauth-server-0.11.0-3.9.1-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-server-[version from kafka docker image].jar
+#      - ../kafka-security-oauth-client/target/kafka-security-oauth-client-0.11.0-3.9.1-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-client-[version from kafka docker image].jar
       - ./public-certs:/opt/kafka/public-certs
       - ./trusted-certs:/opt/kafka/trustcerts
     links:

@@ -11,8 +11,8 @@ For example,
 
 ```
 volumes:
-  - ../kafka-security-oauth-server/target/kafka-security-oauth-server-0.10.0-3.8.0-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-server-2.7.1-3.1.jar
-  - ../kafka-security-oauth-client/target/kafka-security-oauth-client-0.10.0-3.8.0-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-client-2.7.1-3.1.jar
+  - ../kafka-security-oauth-server/target/kafka-security-oauth-server-0.11.0-3.9.1-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-server-2.7.1-3.1.jar
+  - ../kafka-security-oauth-client/target/kafka-security-oauth-client-0.11.0-3.9.1-SNAPSHOT.jar:/opt/kafka/libs/kafka-security-oauth-client-2.7.1-3.1.jar
 ```
 
 To run the demo, you need to perform the following command in terminal:

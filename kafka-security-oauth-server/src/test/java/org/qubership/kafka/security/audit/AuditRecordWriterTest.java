@@ -91,7 +91,7 @@ public class AuditRecordWriterTest {
 
   @Test
   public void testSuccessfulAuthenticationEvent() {
-    String expectedLogValue = "CEF:1|qubership|Kafka|3.8.0|AUTHENTICATION_EVENT|Successful authentication for principal 'admin' with client IP '1.1.1.1'|2|result=successful suser=admin src=1.1.1.1 authenticationType=SASL type=audit_log_type";
+    String expectedLogValue = "CEF:1|qubership|Kafka|3.9.1|AUTHENTICATION_EVENT|Successful authentication for principal 'admin' with client IP '1.1.1.1'|2|result=successful suser=admin src=1.1.1.1 authenticationType=SASL type=audit_log_type";
 
     Map<String, String> options = Collections.singletonMap("auditLogsEnabled", "true");
     AuditRecordWriter.getInstance().configure(options);
@@ -112,7 +112,7 @@ public class AuditRecordWriterTest {
 
   @Test
   public void testFailedAuthenticationEvent() {
-    String expectedLogValue = "CEF:1|qubership|Kafka|3.8.0|AUTHENTICATION_FAILED|Failed authentication for principal 'admin' with client IP '1.1.1.1': Incorrect password|6|result=failed suser=admin src=1.1.1.1 authenticationType=SASL type=audit_log_type";
+    String expectedLogValue = "CEF:1|qubership|Kafka|3.9.1|AUTHENTICATION_FAILED|Failed authentication for principal 'admin' with client IP '1.1.1.1': Incorrect password|6|result=failed suser=admin src=1.1.1.1 authenticationType=SASL type=audit_log_type";
 
     Map<String, String> options = Collections.singletonMap("auditLogsEnabled", "true");
     AuditRecordWriter.getInstance().configure(options);

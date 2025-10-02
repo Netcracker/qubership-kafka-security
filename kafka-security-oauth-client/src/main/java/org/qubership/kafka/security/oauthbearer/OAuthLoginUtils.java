@@ -50,12 +50,13 @@ public class OAuthLoginUtils {
   }
 
   static Client createClient(Logger logger) {
-    ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+    ClassLoader prev = Thread.currentThread().getContextClassLoader();
     try {
-      clientBuilder.sslContext(SSLContext.getDefault());
-    } catch (NoSuchAlgorithmException e) {
-      logger.error("Cannot load default SSL context", e);
+      Thread.currentThread().setContextClassLoader(ClientBuilder.class.getClassLoader());
+      ClientBuilder builder = ClientBuilder.newBuilder();
+      return builder.build();
+    } finally {
+      Thread.currentThread().setContextClassLoader(prev);
     }
-    return clientBuilder.build();
   }
 }

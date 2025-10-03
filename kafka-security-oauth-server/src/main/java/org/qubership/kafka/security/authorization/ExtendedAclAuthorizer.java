@@ -16,13 +16,17 @@
 
 package org.qubership.kafka.security.authorization;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
-import kafka.security.authorizer.AclAuthorizer;
+
+import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.server.authorizer.*;
 import org.apache.kafka.common.acl.AccessControlEntryFilter;
 import org.apache.kafka.common.acl.AclBindingFilter;
 import org.apache.kafka.common.acl.AclOperation;
@@ -31,15 +35,17 @@ import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.apache.kafka.common.security.auth.KafkaPrincipal;
 import org.apache.kafka.security.authorizer.AclEntry;
-import org.apache.kafka.server.authorizer.Action;
-import org.apache.kafka.server.authorizer.AuthorizableRequestContext;
-import org.apache.kafka.server.authorizer.AuthorizationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuthorizer {
+import org.apache.kafka.metadata.authorizer.StandardAuthorizer;
+import org.apache.kafka.common.Endpoint;
+
+public class ExtendedAclAuthorizer implements ExtendedAuthorizer, Authorizer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedAclAuthorizer.class);
+
+  private final StandardAuthorizer delegate = new StandardAuthorizer();
 
   private boolean shouldAllowEveryoneIfNoAclIsFound = false;
 
@@ -50,8 +56,18 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
     LOGGER.debug("Configuration is {}", javaConfigs);
     shouldAllowEveryoneIfNoAclIsFound = Boolean
         .parseBoolean(String.valueOf(javaConfigs.get(Constants.ALLOW_EVERYONE_IF_NO_ACL_FOUND)));
-    super.configure(javaConfigs);
     superUsers = getSuperUsers(javaConfigs);
+    delegate.configure(javaConfigs);
+  }
+
+  @Override
+  public Map<Endpoint, ? extends CompletionStage<Void>> start(AuthorizerServerInfo serverInfo) {
+    return delegate.start(serverInfo);
+  }
+
+  @Override
+  public Iterable<AclBinding> acls(AclBindingFilter filter) {
+    return delegate.acls(filter);
   }
 
   @Override
@@ -60,6 +76,21 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
     return actions.stream().map(action -> customAuthorizeAction(requestContext, action))
         .collect(Collectors.toList());
   }
+
+  @Override
+  public List<? extends CompletionStage<AclCreateResult>> createAcls(AuthorizableRequestContext ctx,
+                                                                     List<AclBinding> acls) {
+    return delegate.createAcls(ctx, acls);
+  }
+
+  @Override
+  public List<? extends CompletionStage<AclDeleteResult>> deleteAcls(AuthorizableRequestContext ctx,
+                                                                     List<AclBindingFilter> filters) {
+    return delegate.deleteAcls(ctx, filters);
+  }
+
+  @Override
+  public void close() throws IOException { delegate.close(); }
 
   /**
    * Operation is allowed if no ACLs are found and Kafka has configured to give access to all users
@@ -74,7 +105,7 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
    */
   public boolean aclsAllowAccess(AclOperation operation, ResourcePattern resource, String host,
       String requestPrincipalType, Set<String> requestPrincipalNames) {
-    Set<AclEntry> aclSet = getAclSetByResource(resource);
+    Set<AclBinding> aclSet = getAclSetByResource(resource);
     LOGGER.debug("ACL set for resource {} is {}", resource, aclSet);
     return isAclEmptyAndEveryoneIsAllowed(aclSet, resource)
         || !denyAclExists(aclSet, operation, host, requestPrincipalType, requestPrincipalNames)
@@ -92,12 +123,12 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
    * @param resource resource the user is trying to access
    * @return set of ACL entries for resource
    */
-  private Set<AclEntry> getAclSetByResource(ResourcePattern resource) {
+  private Set<AclBinding> getAclSetByResource(ResourcePattern resource) {
     AclBindingFilter filter = new AclBindingFilter(
-        new ResourcePatternFilter(resource.resourceType(), resource.name(), PatternType.MATCH),
-        AccessControlEntryFilter.ANY);
-    Set<AclEntry> aclSet = new HashSet<>();
-    acls(filter).forEach(aclBinding -> aclSet.add(new AclEntry(aclBinding.entry())));
+            new ResourcePatternFilter(resource.resourceType(), resource.name(), PatternType.MATCH),
+            AccessControlEntryFilter.ANY);
+    Set<AclBinding> aclSet = new HashSet<>();
+    acls(filter).forEach(aclSet::add);
     return aclSet;
   }
 
@@ -109,7 +140,7 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
    * @param resource resource the user is trying to access
    * @return true if ACL set is empty and property 'allow.everyone.if.no.acl.found' has value 'true'
    */
-  private boolean isAclEmptyAndEveryoneIsAllowed(Set<AclEntry> aclSet, ResourcePattern resource) {
+  private boolean isAclEmptyAndEveryoneIsAllowed(Set<AclBinding> aclSet, ResourcePattern resource) {
     if (aclSet.isEmpty()) {
       logAuthResultForEmptyAcl(resource);
       return shouldAllowEveryoneIfNoAclIsFound;
@@ -135,7 +166,7 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
    * @param requestPrincipalNames set of principal names that are looked for in list of ACLs
    * @return true if operation is denied for the principal
    */
-  private boolean denyAclExists(Set<AclEntry> aclSet, AclOperation operation, String host,
+  private boolean denyAclExists(Set<AclBinding> aclSet, AclOperation operation, String host,
       String requestPrincipalType, Set<String> requestPrincipalNames) {
     return aclMatch(aclSet, Constants.DENY, operation.name(), host, requestPrincipalType,
         requestPrincipalNames);
@@ -152,7 +183,7 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
    * @param requestPrincipalNames Set of principal names that are looked for in list of ACLs
    * @return true if operation is allowed for the principal
    */
-  private boolean allowAclExists(Set<AclEntry> aclSet, AclOperation operation, String host,
+  private boolean allowAclExists(Set<AclBinding> aclSet, AclOperation operation, String host,
       String requestPrincipalType, Set<String> requestPrincipalNames) {
     Set<String> operations = getOperationsByAclOperation(operation.name());
     for (String op : operations) {
@@ -175,9 +206,9 @@ public class ExtendedAclAuthorizer extends AclAuthorizer implements ExtendedAuth
    * @param requestPrincipalNames set of principal names that are looked for in list of ACLs
    * @return true if match is found
    */
-  private boolean aclMatch(Set<AclEntry> aclSet, @Nonnull String permissionType, String operation,
+  private boolean aclMatch(Set<AclBinding> aclSet, @Nonnull String permissionType, String operation,
       String host, String requestPrincipalType, Set<String> requestPrincipalNames) {
-    for (AclEntry acl : aclSet) {
+    for (AclBinding acl : aclSet) {
       boolean match = AclMatcher.match(acl, permissionType, operation, host, requestPrincipalType,
           requestPrincipalNames);
       if (match) {

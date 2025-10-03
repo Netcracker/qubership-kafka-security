@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import org.slf4j.Logger;
 
@@ -49,12 +50,12 @@ public class OAuthLoginUtils {
     return new URI(url).normalize().toString();
   }
 
-  static Client createClient(Logger logger) {
+  static Client createClient(org.slf4j.Logger log) {
     ClassLoader prev = Thread.currentThread().getContextClassLoader();
+    ClassLoader jerseyCl = JerseyClientBuilder.class.getClassLoader();
     try {
-      Thread.currentThread().setContextClassLoader(ClientBuilder.class.getClassLoader());
-      ClientBuilder builder = ClientBuilder.newBuilder();
-      return builder.build();
+      Thread.currentThread().setContextClassLoader(jerseyCl);
+      return new JerseyClientBuilder().build();
     } finally {
       Thread.currentThread().setContextClassLoader(prev);
     }

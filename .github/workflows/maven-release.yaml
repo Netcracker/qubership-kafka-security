@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Build and Publish current SNAPSHOT (dry run)"
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@main
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@v1.0.7
         with:
           version-type: ${{ github.event.inputs.version-type }}
           module: ${{ github.event.repository.name }}
@@ -123,7 +123,7 @@ jobs:
   docker-build-publish:
     needs: [deploy, check-dockerfile]
     if: ${{ github.event.inputs.build-docker == 'true' && needs.check-dockerfile.outputs.dockerfile_exists == 'exists' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/docker-publish.yml@main
+    uses: netcracker/qubership-workflow-hub/.github/workflows/docker-publish.yml@v1.0.7
     with:
       ref: "v${{ needs.deploy.outputs.release-version }}"
       artifact-id: ${{ needs.update-pom-version.outputs.artifact_id }}
@@ -133,7 +133,7 @@ jobs:
   github-release:
     needs: [deploy, docker-build-publish]
     if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@main
+    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v1.0.7
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true

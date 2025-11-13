@@ -11,6 +11,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>kafka-security-oauth-server</artifactId>
   <packaging>jar</packaging>
+  <name>Kafka Security OAuth Server</name>
+  <description>OAuth2 Authentication Server for Kafka Security extensions</description>
 
   <dependencies>
     <dependency>

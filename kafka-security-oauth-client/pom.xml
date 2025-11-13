@@ -11,6 +11,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>kafka-security-oauth-client</artifactId>
   <packaging>jar</packaging>
+  <name>Kafka Security OAuth Client</name>
+  <description>OAuth2 Authentication Client for Kafka Security extensions</description>
 
   <dependencies>
     <dependency>

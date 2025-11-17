@@ -133,7 +133,7 @@ jobs:
   github-release:
     needs: [deploy, docker-build-publish]
     if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v1.0.7
+    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v2.0.1
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true

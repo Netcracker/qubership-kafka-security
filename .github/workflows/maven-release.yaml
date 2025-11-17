@@ -123,7 +123,7 @@ jobs:
   docker-build-publish:
     needs: [deploy, check-dockerfile]
     if: ${{ github.event.inputs.build-docker == 'true' && needs.check-dockerfile.outputs.dockerfile_exists == 'exists' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/docker-publish.yml@v1.0.7
+    uses: netcracker/qubership-workflow-hub/.github/workflows/docker-publish.yml@v2.0.1
     with:
       ref: "v${{ needs.deploy.outputs.release-version }}"
       artifact-id: ${{ needs.update-pom-version.outputs.artifact_id }}
